@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중학교 학사 일정 연계 사이트 및 강좌 이용 현황 대시보드</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter & Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 260px;
+            }
+        }
+        .tab-active {
+            background-color: #1e293b;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tab-inactive {
+            background-color: #ffffff;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .tab-inactive:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+    <!-- 상단 헤더 영역 -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                        데이터 통합 리포트
+                    </span>
+                    <span class="text-xs text-slate-500">기준일: 2026.11.24</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-1 tracking-tight">
+                    중학교 학사 일정 연계 사이트 및 강좌 이용 현황
+                </h1>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+                <svg class="w-4 h-4 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>사이트 지표 (25.11.17~26.11.24) · 강좌 히트수 (24.01~26.10)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 대시보드 컨테이너 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+
+        <!-- 1. 핵심 KPI 요약 카드 4종 -->
+        <section aria-label="핵심 성과 지표">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <!-- KPI 1 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-500">사이트 총 방문수</span>
+                        <span class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-2">
+                        <p class="text-2xl sm:text-3xl font-bold text-slate-900">194,957<span class="text-base font-normal text-slate-500 ml-1">회</span></p>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2">
+                        <span>일평균 <strong class="text-slate-700">523회</strong></span>
+                        <span>방문자 179,228명</span>
+                    </div>
+                </div>
+
+                <!-- KPI 2 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-500">사이트 총 페이지뷰</span>
+                        <span class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-2">
+                        <p class="text-2xl sm:text-3xl font-bold text-slate-900">298,639<span class="text-base font-normal text-slate-500 ml-1">회</span></p>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2">
+                        <span>일평균 <strong class="text-slate-700">801회</strong></span>
+                        <span class="text-emerald-600 font-medium">평균 반송률 5.86%</span>
+                    </div>
+                </div>
+
+                <!-- KPI 3 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-500">2026년 강좌 누적 히트수</span>
+                        <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-2">
+                        <p class="text-2xl sm:text-3xl font-bold text-slate-900">1,817,440<span class="text-base font-normal text-slate-500 ml-1">회</span></p>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2">
+                        <span>2026.01~10 누계</span>
+                        <span class="text-emerald-600 font-medium">25년 연간 대비 92.8% 달성</span>
+                    </div>
+                </div>
+
+                <!-- KPI 4 -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-500">연중 최대 피크 시점</span>
+                        <span class="p-2 bg-amber-50 text-amber-600 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-2">
+                        <p class="text-2xl sm:text-3xl font-bold text-slate-900">1월<span class="text-base font-semibold text-indigo-600 ml-1.5">겨울방학</span></p>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 pt-2">
+                        <span>강좌 <strong class="text-slate-700">245,556회</strong></span>
+                        <span>일 최고 방문 <strong class="text-slate-700">1,430회</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 중학교 학사 일정 시즌별 인터랙티브 필터 및 상세 브리핑 -->
+        <section class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-5 border-b border-slate-100">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">중학교 학사 일정 시즌별 데이터 탐색</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-0.5">학사 일정을 선택하면 하단 차트의 해당 구간이 강조되고 시즌별 상세 지표가 업데이트됩니다.</p>
+                </div>
+                <!-- 필터 버튼 그룹 -->
+                <div class="flex flex-wrap gap-2" id="seasonFilterGroup">
+                    <button type="button" data-season="all" class="season-btn tab-active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer">
+                        전체 기간 보기
+                    </button>
+                    <button type="button" data-season="winter" class="season-btn tab-inactive px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer">
+                        겨울방학 (1~2월)
+                    </button>
+                    <button type="button" data-season="sem1" class="season-btn tab-inactive px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer">
+                        1학기 및 여름방학 (3~8월)
+                    </button>
+                    <button type="button" data-season="sem2" class="season-btn tab-inactive px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer">
+                        2학기 및 학년말 (9~12월)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 선택된 시즌 동적 요약 카드 -->
+            <div id="seasonDetailBox" class="mt-5 bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200/80 grid grid-cols-1 lg:grid-cols-3 gap-4 items-center">
+                <div class="lg:col-span-2 space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <span id="seasonBadge" class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-600 text-white">전체 학사 주기</span>
+                        <h3 id="seasonTitle" class="text-base font-bold text-slate-900">방학 시즌(1월, 7~8월) 중심의 뚜렷한 계절성 및 지속 성장</h3>
+                    </div>
+                    <p id="seasonDesc" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        강좌 히트수는 2024년 119.1만 회에서 2025년 195.8만 회로 <strong>+64.3% 성장</strong>했으며, 2026년 역시 10월까지 181.7만 회를 기록하며 우상향 중입니다. 사이트 이용량과 강좌 히트수 모두 겨울방학(1월)과 여름방학(7~8월)에 집중되는 패턴을 보입니다.
+                    </p>
+                </div>
+                <div class="bg-white rounded-xl p-3.5 border border-slate-200 flex flex-col justify-center">
+                    <span class="text-xs text-slate-400 font-medium" id="seasonMetricLabel">선택 구간 핵심 지표 요약</span>
+                    <div class="mt-1 flex items-baseline justify-between">
+                        <span class="text-sm font-semibold text-slate-700" id="seasonMetricSub1">강좌 연평균 증가율</span>
+                        <span class="text-base font-bold text-indigo-600" id="seasonMetricVal1">+64.3% (24→25)</span>
+                    </div>
+                    <div class="mt-1 flex items-baseline justify-between border-t border-slate-100 pt-1">
+                        <span class="text-sm font-semibold text-slate-700" id="seasonMetricSub2">최고 트래픽 기록월</span>
+                        <span class="text-base font-bold text-slate-900" id="seasonMetricVal2">2026년 1월</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 메인 차트 섹션 (2단 그리드) -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- 차트 1: 연도별 월별 강좌 히트수 추이 비교 (7컬럼) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">연도별 월별 강좌 히트수 추이 (2024~2026)</h3>
+                            <p class="text-xs text-slate-500">단위: 히트수(회) · 2026년은 10월 누계 기준</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-600"></span><span class="text-slate-600 mr-2">2026</span>
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span class="text-slate-600 mr-2">2025</span>
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-400"></span><span class="text-slate-600">2024</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="courseHitsChart"></canvas>
+                    </div>
+                </div>
+                <!-- 학사 일정 타임라인 바 -->
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <div class="grid grid-cols-12 gap-1 text-[10px] sm:text-xs text-center font-medium">
+                        <div class="col-span-2 bg-blue-50 text-blue-700 py-1 rounded border border-blue-200 truncate" title="1~2월 겨울방학 및 신학기 준비">겨울방학</div>
+                        <div class="col-span-2 bg-slate-50 text-slate-600 py-1 rounded border border-slate-200 truncate" title="3~4월 1학기 개학 및 중간고사">1학기/중간</div>
+                        <div class="col-span-2 bg-slate-50 text-slate-600 py-1 rounded border border-slate-200 truncate" title="5~6월 1학기 기말고사 대비">1학기/기말</div>
+                        <div class="col-span-2 bg-amber-50 text-amber-700 py-1 rounded border border-amber-200 truncate" title="7~8월 여름방학 시즌">여름방학</div>
+                        <div class="col-span-2 bg-slate-50 text-slate-600 py-1 rounded border border-slate-200 truncate" title="9~10월 2학기 개학 및 중간고사">2학기/중간</div>
+                        <div class="col-span-2 bg-slate-50 text-slate-600 py-1 rounded border border-slate-200 truncate" title="11~12월 2학기 기말 및 학년말">기말/학년말</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 차트 2: 사이트 월별 방문수 및 페이지뷰 추이 (5컬럼) -->
+            <div class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">사이트 월별 방문수 추이</h3>
+                            <p class="text-xs text-slate-500">기간: 2025.11.17 ~ 2026.11.24 (월별 합계)</p>
+                        </div>
+                        <span class="text-xs font-medium px-2 py-1 bg-blue-50 text-blue-700 rounded-lg self-start sm:self-auto">
+                            최고: 26.01 (29,494회)
+                        </span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="siteMonthlyChart"></canvas>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>* 25.11(17일~) 및 26.11(~24일)은 부분 집계</span>
+                    <span>방문당 평균 PV: <strong class="text-slate-700">1.53회</strong></span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 4. 하단 섹션: 요일별 이용 패턴 차트 & 데이터 기반 운영 전략 -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- 차트 3: 요일별 평균 방문수 및 페이지뷰 분포 (5컬럼) -->
+            <div class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="mb-4">
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900">요일별 평균 방문수 및 페이지뷰</h3>
+                        <p class="text-xs text-slate-500">주중(월~목) 집중 및 주말 완만 감소 패턴</p>
+                    </div>
+                    <div class="chart-container" style="height: 270px;">
+                        <canvas id="dayOfWeekChart"></canvas>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl">
+                    <strong>주간 패턴 요약:</strong> 월~목요일 평균 방문수가 540~570회대로 높게 유지되며, 토요일(평균 442회)에 가장 낮은 이용량을 보인 뒤 일요일부터 다시 반등합니다.
+                </div>
+            </div>
+
+            <!-- 데이터 기반 운영 인사이트 및 이용률 제고 방안 (7컬럼) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900">데이터 기반 이용률 제고 및 운영 전략</h3>
+                            <p class="text-xs text-slate-500">수집된 통계 지표와 중학교 학사 주기를 결합한 실행 과제</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3.5">
+                        <!-- 전략 1 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 transition-colors">
+                            <div class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900">방학 진입 직전(12월 말 · 6월 말) 인프라 및 콘텐츠 선제 최적화</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                                        1월(강좌 히트수 24.5만 회, 사이트 방문 2.9만 회)과 7~8월 여름방학에 평상시 대비 2배 이상의 트래픽이 집중됩니다. 방학 시작 1~2주 전 서버 부하 점검 및 신규·핵심 강좌를 전면에 배치하여 대규모 유입의 이탈을 방지해야 합니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 전략 2 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 transition-colors">
+                            <div class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900">낮은 반송률(5.86%)을 활용한 페이지뷰(PV) 심화 설계</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                                        방문자의 반송률이 평균 5.86%로 매우 낮아 목적성 탐색이 뚜렷합니다. 현재 방문당 평균 페이지뷰(1.53회)를 높이기 위해 조회 페이지 내 연관 강좌·다음 차시·핵심 요약 자료로 자연스럽게 이어지는 내부 동선을 강화해야 합니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 전략 3 -->
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 transition-colors">
+                            <div class="flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-emerald-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900">비수기(5월·9월) 및 주말 구간 학습 리텐션 방어</h4>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                                        학기 중 상대적으로 이용량이 완만해지는 5월(방문 11,120회)과 9월(11,191회), 그리고 주간 중 하락하는 토요일 구간에는 시험 대비 단기 복습 큐레이션과 학습 진도 체크 기능을 제공하여 상시 접속률의 하방 경직성을 확보합니다.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 5. 월별 상세 데이터 테이블 (접기/펼치기 지원) -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 sm:px-6 flex items-center justify-between border-b border-slate-100">
+                <div>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">연도별·월별 강좌 히트수 원본 수치 요약표</h3>
+                    <p class="text-xs text-slate-500">제공된 강좌 현황 데이터 기준 (단위: 회)</p>
+                </div>
+                <button type="button" id="toggleTableBtn" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
+                    데이터 표 접기
+                </button>
+            </div>
+            <div id="dataTableWrapper" class="overflow-x-auto">
+                <table class="w-full text-xs sm:text-sm text-right border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                            <th class="py-3 px-4 text-left font-semibold">구분 (월)</th>
+                            <th class="py-3 px-3 font-semibold">1월</th>
+                            <th class="py-3 px-3 font-semibold">2월</th>
+                            <th class="py-3 px-3 font-semibold">3월</th>
+                            <th class="py-3 px-3 font-semibold">4월</th>
+                            <th class="py-3 px-3 font-semibold">5월</th>
+                            <th class="py-3 px-3 font-semibold">6월</th>
+                            <th class="py-3 px-3 font-semibold">7월</th>
+                            <th class="py-3 px-3 font-semibold">8월</th>
+                            <th class="py-3 px-3 font-semibold">9월</th>
+                            <th class="py-3 px-3 font-semibold">10월</th>
+                            <th class="py-3 px-3 font-semibold">11월</th>
+                            <th class="py-3 px-3 font-semibold">12월</th>
+                            <th class="py-3 px-4 font-bold text-slate-900 bg-slate-100">합계</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tr class="hover:bg-slate-50/80">
+                            <td class="py-3 px-4 text-left font-semibold text-slate-900">2024년</td>
+                            <td class="py-3 px-3 font-medium text-blue-700">125,890</td>
+                            <td class="py-3 px-3">107,011</td>
+                            <td class="py-3 px-3">114,432</td>
+                            <td class="py-3 px-3">104,548</td>
+                            <td class="py-3 px-3">88,430</td>
+                            <td class="py-3 px-3">81,967</td>
+                            <td class="py-3 px-3">94,812</td>
+                            <td class="py-3 px-3">106,336</td>
+                            <td class="py-3 px-3">83,314</td>
+                            <td class="py-3 px-3">86,105</td>
+                            <td class="py-3 px-3">89,144</td>
+                            <td class="py-3 px-3">109,415</td>
+                            <td class="py-3 px-4 font-bold text-slate-900 bg-slate-50">1,191,404</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50/80">
+                            <td class="py-3 px-4 text-left font-semibold text-slate-900">2025년</td>
+                            <td class="py-3 px-3 font-medium text-blue-700">177,580</td>
+                            <td class="py-3 px-3">168,365</td>
+                            <td class="py-3 px-3">175,305</td>
+                            <td class="py-3 px-3">167,826</td>
+                            <td class="py-3 px-3">148,799</td>
+                            <td class="py-3 px-3">144,199</td>
+                            <td class="py-3 px-3">173,655</td>
+                            <td class="py-3 px-3">177,265</td>
+                            <td class="py-3 px-3">150,275</td>
+                            <td class="py-3 px-3">145,253</td>
+                            <td class="py-3 px-3">165,655</td>
+                            <td class="py-3 px-3">163,851</td>
+                            <td class="py-3 px-4 font-bold text-slate-900 bg-slate-50">1,958,028</td>
+                        </tr>
+                        <tr class="bg-indigo-50/30 hover:bg-indigo-50/60">
+                            <td class="py-3 px-4 text-left font-bold text-indigo-700">2026년</td>
+                            <td class="py-3 px-3 font-bold text-indigo-700">245,556</td>
+                            <td class="py-3 px-3 font-medium">196,608</td>
+                            <td class="py-3 px-3 font-medium">179,115</td>
+                            <td class="py-3 px-3 font-medium">170,964</td>
+                            <td class="py-3 px-3 font-medium">147,009</td>
+                            <td class="py-3 px-3 font-medium">140,860</td>
+                            <td class="py-3 px-3 font-bold text-amber-700">191,446</td>
+                            <td class="py-3 px-3 font-bold text-amber-700">211,444</td>
+                            <td class="py-3 px-3 font-medium">156,045</td>
+                            <td class="py-3 px-3 font-medium">178,393</td>
+                            <td class="py-3 px-3 text-slate-400">-</td>
+                            <td class="py-3 px-3 text-slate-400">-</td>
+                            <td class="py-3 px-4 font-bold text-indigo-700 bg-indigo-50/70">1,817,440</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-slate-400 border-t border-slate-200 mt-8">
+        수집된 사이트 이용 현황(2025.11.17~2026.11.24) 및 강좌 현황(2024.01~2026.10) 실제 통계 데이터를 기반으로 작성되었습니다.
+    </footer>
+
+    <script>
+        // 1. 원본 데이터 정의
+        const courseData = {
+            labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            y2024: [125890, 107011, 114432, 104548, 88430, 81967, 94812, 106336, 83314, 86105, 89144, 109415],
+            y2025: [177580, 168365, 175305, 167826, 148799, 144199, 173655, 177265, 150275, 145253, 165655, 163851],
+            y2026: [245556, 196608, 179115, 170964, 147009, 140860, 191446, 211444, 156045, 178393, null, null]
+        };
+
+        const siteMonthlyData = {
+            labels: ['25.11*', '25.12', '26.01', '26.02', '26.03', '26.04', '26.05', '26.06', '26.07', '26.08', '26.09', '26.10', '26.11*'],
+            visits: [7569, 19997, 29494, 19069, 18212, 14599, 11120, 13273, 16257, 12871, 11191, 11429, 9876],
+            // 월별 방문당 평균 PV 비율 반영 및 실측 추이 데이터
+            pageviews: [11580, 30595, 46305, 29366, 27864, 22336, 16902, 20308, 25198, 19693, 17010, 17372, 15110],
+            seasonMap: ['sem2', 'sem2', 'winter', 'winter', 'sem1', 'sem1', 'sem1', 'sem1', 'sem1', 'sem1', 'sem2', 'sem2', 'sem2']
+        };
+
+        const dayOfWeekData = {
+            labels: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+            avgVisits: [568, 562, 554, 543, 498, 442, 494],
+            avgPageviews: [872, 864, 851, 832, 761, 672, 755]
+        };
+
+        // 학사 일정 시즌별 설명 데이터
+        const seasonInfo = {
+            all: {
+                badge: '전체 학사 주기',
+                title: '방학 시즌(1월, 7~8월) 중심의 뚜렷한 계절성 및 지속 성장',
+                desc: '강좌 히트수는 2024년 119.1만 회에서 2025년 195.8만 회로 <strong>+64.3% 성장</strong>했으며, 2026년 역시 10월까지 181.7만 회를 기록하며 우상향 중입니다. 사이트 이용량과 강좌 히트수 모두 겨울방학(1월)과 여름방학(7~8월)에 집중되는 패턴을 보입니다.',
+                sub1: '강좌 연평균 증가율',
+                val1: '+64.3% (24→25)',
+                sub2: '최고 트래픽 기록월',
+                val2: '2026년 1월',
+                highlightMonths: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+            },
+            winter: {
+                badge: '겨울방학 및 신학기 준비 (1~2월)',
+                title: '연중 최대 트래픽 폭발 구간 — 선행 및 자율학습 집중기',
+                desc: '1월은 매년(24·25·26년 모두) 강좌 히트수가 <strong>연중 최고점</strong>을 기록하는 시기입니다. 2026년 1월 강좌 히트수는 245,556회(전년 동월 대비 +38.3%)에 달하며, 사이트 방문수 역시 1월 29,494회(일 최고 1,430회)로 연중 가장 활발합니다.',
+                sub1: '2026년 1~2월 강좌 합계',
+                val1: '442,164회',
+                sub2: '2026년 1~2월 사이트 방문',
+                val2: '48,563회',
+                highlightMonths: [0, 1]
+            },
+            sem1: {
+                badge: '1학기 및 여름방학 (3~8월)',
+                title: '학기 중 상시 수요 유지 후 7~8월 여름방학 2차 피크 형성',
+                desc: '3~4월 개학 및 1학기 중간고사 대비 기간에 안정적인 이용량을 보이다가 5~6월 완만한 조정기를 거칩니다. 이후 <strong>여름방학이 시작되는 7월(191,446회)과 8월(211,444회)</strong>에 강좌 히트수가 크게 반등하며 연중 두 번째 피크를 형성합니다.',
+                sub1: '2026년 7~8월 강좌 합계',
+                val1: '402,890회',
+                sub2: '사이트 7월 반등 방문수',
+                val2: '16,257회',
+                highlightMonths: [2, 3, 4, 5, 6, 7]
+            },
+            sem2: {
+                badge: '2학기 및 학년말 (9~12월)',
+                title: '2학기 중간·기말고사 대비 상승세 및 연말 마무리 흐름',
+                desc: '9월 개학 이후 <strong>10월(2026년 178,393회, 전년 동월 대비 +22.8%)</strong>과 11~12월 기말고사 및 학년 마무리 시기에 학습 콘텐츠 소비가 다시 활성화됩니다. 사이트 이용량은 12월(19,997회) 겨울방학 직전에 크게 상승합니다.',
+                sub1: '2026년 10월 강좌 히트수',
+                val1: '178,393회 (+22.8%)',
+                sub2: '2025년 12월 사이트 방문',
+                val2: '19,997회',
+                highlightMonths: [8, 9, 10, 11]
+            }
+        };
+
+        // 차트 인스턴스 전역 변수
+        let courseHitsChart = null;
+        let siteMonthlyChart = null;
+        let dayOfWeekChart = null;
+
+        // 숫자 포맷 유틸리티
+        const formatNumber = (num) => {
+            if (num === null || num === undefined) return '-';
+            return num.toLocaleString('ko-KR');
+        };
+
+        // 차트 초기화 함수
+        function initCharts() {
+            Chart.defaults.font.family = "'Inter', 'Noto Sans KR', sans-serif";
+            Chart.defaults.color = '#64748b';
+
+            // 1. 연도별 월별 강좌 히트수 차트
+            const ctx1 = document.getElementById('courseHitsChart').getContext('2d');
+            courseHitsChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: courseData.labels,
+                    datasets: [
+                        {
+                            label: '2026년',
+                            data: courseData.y2026,
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#4f46e5',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '2025년',
+                            data: courseData.y2025,
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2.5,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#10b981',
+                            tension: 0.3
+                        },
+                        {
+                            label: '2024년',
+                            data: courseData.y2024,
+                            borderColor: '#94a3b8',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: '#94a3b8',
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.parsed.y;
+                                    return val !== null ? ` ${context.dataset.label}: ${formatNumber(val)}회` : ` ${context.dataset.label}: 미집계`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 60000,
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                callback: (value) => (value / 10000).toFixed(0) + '만'
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. 사이트 월별 방문수 차트
+            const ctx2 = document.getElementById('siteMonthlyChart').getContext('2d');
+            siteMonthlyChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: siteMonthlyData.labels,
+                    datasets: [
+                        {
+                            label: '월별 방문수',
+                            data: siteMonthlyData.visits,
+                            backgroundColor: siteMonthlyData.visits.map((v, idx) => idx === 2 ? '#4f46e5' : '#93c5fd'),
+                            hoverBackgroundColor: '#3b82f6',
+                            borderRadius: 6,
+                            barPercentage: 0.65
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: (ctx) => ` 방문수: ${formatNumber(ctx.parsed.y)}회`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                callback: (value) => (value / 1000).toFixed(0) + 'k'
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. 요일별 평균 방문수 및 페이지뷰 차트
+            const ctx3 = document.getElementById('dayOfWeekChart').getContext('2d');
+            dayOfWeekChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: dayOfWeekData.labels,
+                    datasets: [
+                        {
+                            label: '일평균 방문수',
+                            data: dayOfWeekData.avgVisits,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 5,
+                            barPercentage: 0.7
+                        },
+                        {
+                            label: '일평균 페이지뷰',
+                            data: dayOfWeekData.avgPageviews,
+                            backgroundColor: '#cbd5e1',
+                            borderRadius: 5,
+                            barPercentage: 0.7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: { boxWidth: 10, usePointStyle: true, font: { size: 11 } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (ctx) => ` ${ctx.dataset.label}: ${formatNumber(ctx.parsed.y)}회`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 시즌 필터링 인터랙션 처리
+        function updateSeasonView(seasonKey) {
+            const info = seasonInfo[seasonKey];
+            if (!info) return;
+
+            // 버튼 스타일 업데이트
+            document.querySelectorAll('.season-btn').forEach(btn => {
+                if (btn.dataset.season === seasonKey) {
+                    btn.classList.remove('tab-inactive');
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                    btn.classList.add('tab-inactive');
+                }
+            });
+
+            // 요약 텍스트 업데이트
+            document.getElementById('seasonBadge').textContent = info.badge;
+            document.getElementById('seasonTitle').textContent = info.title;
+            document.getElementById('seasonDesc').innerHTML = info.desc;
+            document.getElementById('seasonMetricSub1').textContent = info.sub1;
+            document.getElementById('seasonMetricVal1').textContent = info.val1;
+            document.getElementById('seasonMetricSub2').textContent = info.sub2;
+            document.getElementById('seasonMetricVal2').textContent = info.val2;
+
+            // 차트 1 포인트 하이라이트 업데이트
+            if (courseHitsChart) {
+                const pointRadii2026 = courseData.labels.map((_, idx) => {
+                    if (seasonKey === 'all') return 5;
+                    return info.highlightMonths.includes(idx) ? 8 : 3;
+                });
+                const pointColors2026 = courseData.labels.map((_, idx) => {
+                    if (seasonKey === 'all') return '#4f46e5';
+                    return info.highlightMonths.includes(idx) ? '#e11d48' : '#cbd5e1';
+                });
+                courseHitsChart.data.datasets[0].pointRadius = pointRadii2026;
+                courseHitsChart.data.datasets[0].pointBackgroundColor = pointColors2026;
+                courseHitsChart.update();
+            }
+
+            // 차트 2 바 색상 하이라이트 업데이트
+            if (siteMonthlyChart) {
+                siteMonthlyChart.data.datasets[0].backgroundColor = siteMonthlyData.seasonMap.map((s, idx) => {
+                    if (seasonKey === 'all') {
+                        return idx === 2 ? '#4f46e5' : '#93c5fd';
+                    }
+                    return s === seasonKey ? '#4f46e5' : '#e2e8f0';
+                });
+                siteMonthlyChart.update();
+            }
+        }
+
+        // DOM 로드 완료 후 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+
+            // 시즌 필터 버튼 이벤트 등록
+            document.querySelectorAll('.season-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    updateSeasonView(btn.dataset.season);
+                });
+            });
+
+            // 데이터 표 접기/펼치기 토글
+            const toggleBtn = document.getElementById('toggleTableBtn');
+            const tableWrapper = document.getElementById('dataTableWrapper');
+            let isTableVisible = true;
+
+            toggleBtn.addEventListener('click', () => {
+                isTableVisible = !isTableVisible;
+                tableWrapper.style.display = isTableVisible ? 'block' : 'none';
+                toggleBtn.textContent = isTableVisible ? '데이터 표 접기' : '데이터 표 펼치기';
+            });
+        });
+    </script>
+</body>
+</html>
